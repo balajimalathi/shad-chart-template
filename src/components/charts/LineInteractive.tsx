@@ -16,6 +16,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useTheme } from "../theme-provider"
+import { useEffect } from "react"
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
   { date: "2024-04-02", desktop: 97, mobile: 180 },
@@ -135,6 +137,24 @@ export default function LineInteractive() {
     }),
     []
   )
+
+  const { setTheme } = useTheme();
+
+  // Expose to window for Flutter to call
+  useEffect(() => {
+    (window as Window & typeof globalThis & { updateChartData?: (newData: string) => void }).updateChartData = (newData: string) => {
+      try { /* empty */ } catch (e) {
+        console.error("Error:", e);
+        console.error("Invalid JSON from Flutter:", newData);
+      }
+    };
+
+    (window as Window & typeof globalThis & { setTheme?: (newTheme: string) => void }).setTheme = (newTheme: string) => {
+      if (newTheme === "dark" || newTheme === "light") {
+        setTheme(newTheme);
+      }
+    };
+  }, []);
 
   return (
     <Card>

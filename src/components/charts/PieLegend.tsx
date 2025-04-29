@@ -7,6 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useTheme } from "../theme-provider";
+import { useEffect } from "react";
 
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
@@ -43,6 +45,25 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function PieLegend() {
+
+  const { setTheme } = useTheme();
+
+  // Expose to window for Flutter to call
+  useEffect(() => {
+    (window as Window & typeof globalThis & { updateChartData?: (newData: string) => void }).updateChartData = (newData: string) => {
+      try { /* empty */ } catch (e) {
+        console.error("Error:", e);
+        console.error("Invalid JSON from Flutter:", newData);
+      }
+    };
+
+    (window as Window & typeof globalThis & { setTheme?: (newTheme: string) => void }).setTheme = (newTheme: string) => {
+      if (newTheme === "dark" || newTheme === "light") {
+        setTheme(newTheme);
+      }
+    };
+  }, []);
+
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">

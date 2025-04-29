@@ -17,6 +17,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useTheme } from "../theme-provider"
+import { useEffect } from "react"
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -38,6 +40,25 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function BarMultiple() {
+
+  const { setTheme } = useTheme();
+
+  // Expose to window for Flutter to call
+  useEffect(() => {
+    (window as Window & typeof globalThis & { updateChartData?: (newData: string) => void }).updateChartData = (newData: string) => {
+      try { /* empty */ } catch (e) {
+        console.error("Error:", e);
+        console.error("Invalid JSON from Flutter:", newData);
+      }
+    };
+
+    (window as Window & typeof globalThis & { setTheme?: (newTheme: string) => void }).setTheme = (newTheme: string) => {
+      if (newTheme === "dark" || newTheme === "light") {
+        setTheme(newTheme);
+      }
+    };
+  }, []);
+
   return (
     <Card>
       <CardHeader>

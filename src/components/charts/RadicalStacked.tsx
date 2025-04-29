@@ -23,15 +23,35 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { 
+import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { TrendingUp } from 'lucide-react';
+import { useTheme } from '../theme-provider';
+import { useEffect } from 'react';
 
 export default function RadicalStacked() {
   const totalVisitors = chartData[0].desktop + chartData[0].mobile
+
+  const { setTheme } = useTheme();
+
+  // Expose to window for Flutter to call
+  useEffect(() => {
+    (window as Window & typeof globalThis & { updateChartData?: (newData: string) => void }).updateChartData = (newData: string) => {
+      try { /* empty */ } catch (e) {
+        console.error("Error:", e);
+        console.error("Invalid JSON from Flutter:", newData);
+      }
+    };
+
+    (window as Window & typeof globalThis & { setTheme?: (newTheme: string) => void }).setTheme = (newTheme: string) => {
+      if (newTheme === "dark" || newTheme === "light") {
+        setTheme(newTheme);
+      }
+    };
+  }, []);
 
   return (
     <Card className="flex flex-col">
