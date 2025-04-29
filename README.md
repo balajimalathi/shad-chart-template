@@ -1,54 +1,134 @@
-# React + TypeScript + Vite
+# Chart Generator with shadcn/ui + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A template for generating standalone HTML charts using React, shadcn/ui, and Vite. Designed for integration with Flutter applications.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🚀 7+ pre-built chart types (bar, line, pie, etc.)
+- 🎨 shadcn/ui for beautiful, customizable components
+- 📦 Self-contained HTML output (single file per chart)
+- ⚡ Optimized for Flutter WebView integration
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js v18+
+- npm v9+
+- Git
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Setup
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/balajimalathi/shad-chart-template.git
+   cd shad-chart-template
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+## Development
+
+### Running the dev server
+
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+When testing in development (`npm run dev`), use `index.html` like this:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```html
+<body data-page="area_interactive">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
 ```
+
+- Change the `data-page` attribute (`area_interactive`, `bar_multiple`, `pie_donut`, etc.) to test different charts during development.
+- Supported variables
+  - `bar_interactive`
+  - `bar_multiple`
+  - `area_interactive`
+  - `line_interactive`
+  - `pie_donut`
+  - `pie_legend`
+  - `radical_stacked`
+
+### Building all charts
+
+```bash
+npm run build:all
+```
+
+### Building specific chart types
+
+```bash
+# Build just pie charts
+npm run build:pieL && npm run build:pieD
+
+# Build bar charts
+npm run build:barI && npm run build:barM
+```
+
+## Chart Types
+
+| Command        | Chart Type          | Output File               |
+|----------------|---------------------|---------------------------|
+| `build:pieL`   | Pie with Legend     | `dist/pie-legend.html`    |
+| `build:pieD`   | Donut Chart         | `dist/pie-donut.html`     |
+| `build:radi`   | Radical Stacked     | `dist/radical-stacked.html`|
+| `build:line`   | Line Chart          | `dist/line-interactive.html`|
+| `build:barI`   | Interactive Bar     | `dist/bar-interactive.html`|
+| `build:barM`   | Multi-series Bar    | `dist/bar-multiple.html`   |
+| `build:area`   | Area Chart          | `dist/area-interactive.html`|
+
+## Integration with Flutter
+
+1. After building, copy the HTML files from `dist/` to your Flutter project's assets:
+
+   ```yaml
+   # flutter/pubspec.yaml
+   assets:
+     - assets/charts/bar-interactive.html
+     - assets/charts/pie-legend.html
+     # Add other charts
+   ```
+
+2. Use in Flutter with `webview_flutter`:
+
+   ```dart
+   WebViewController().loadFile('assets/charts/bar-interactive.html');
+   ```
+
+## Deployment
+
+For production builds:
+
+```bash
+npm run build:all
+```
+
+The output will be in the `dist/` folder - each chart as a self-contained HTML file.
+
+## Troubleshooting
+
+**Issue**: Build errors about missing dependencies  
+**Fix**: Run `npm install` and verify all packages in package.json
+
+**Issue**: Charts not rendering in Flutter  
+**Fix**: Ensure you've:
+
+1. Added files to pubspec.yaml
+2. Proper asset paths in WebView
+3. Built with `npm run build:all`
+
+## License
+
+MIT License - see LICENSE file for details.
+
+---
+
+**Happy charting!** 📊✨
